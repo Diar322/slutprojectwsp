@@ -1,0 +1,6 @@
+h1 alla produkter
+
+ol
+  - @result.each do |product|
+    li 
+      a href="browse/#{product['id']}" #{product["name"]}
