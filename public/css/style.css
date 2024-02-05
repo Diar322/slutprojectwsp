@@ -11,7 +11,7 @@
     font-weight:normal;
     font-style: normal;
     padding: 5px;
-    margin: 0;
+    margin: 5px;
 }
 
 nav {
@@ -25,8 +25,17 @@ nav {
     border-radius: 5px;
 }
 
+nav a {
+    font-size: larger;
+}
+
 a {
     text-decoration: none;
     color: black;
-    font-size: larger;
+}
+
+
+
+.download {
+    border: 2px solid black;
 }
