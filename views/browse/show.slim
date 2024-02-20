@@ -1,5 +1,6 @@
-h1 = @result
+h1 = @result["name"]
 
-p #{@result["name"]}
 p #{@result["description"]}
+p #{@result["price"]}
+
 a class="download" href="/download/#{@result["file_path"]}" Ladda ner
