@@ -70,19 +70,20 @@ post('/registration_result') do
     end
 end
 
-post('login_result') do
-    username = params[:username]
-    password = params[:password]
-    db = SQLite3::Database.new('db/todo2021.db')
+post('/login_result') do
+    username = params[:user]
+    password = params[:pwd]
+    db = SQLite3::Database.new('db/databas.db')
     db.results_as_hash = true
-    result = db.execute("SELECT * FROM users WHERE username = ?", username).first
+    result = db.execute("SELECT * FROM users WHERE username=?", username).first
+    #result = db.execute("SELECT * FROM users WHERE username = ?", username).first
   
     pwdigest = result["pwdigest"]
     id = result["id"]
   
     if BCrypt::Password.new(pwdigest) == password
       session[:id] = id
-      redirect('/todos')
+      redirect('/')
     else
       "FEL LÖSEN"
     end
