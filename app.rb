@@ -9,16 +9,12 @@ enable :sessions
 
 
 get('/')  do
-    slim(:start)
+  slim(:start)
 end 
 
 get('/browse') do
-    db = SQLite3::Database.new("db/databas.db")
-    db.results_as_hash = true
-
-    @result = db.execute("SELECT * FROM products")
-
-    slim(:"browse/index")
+  @result = fetch_products()
+  slim(:"browse/index")
 end
 
 get('/browse/new') do
@@ -26,28 +22,70 @@ get('/browse/new') do
 end
 
 get('/browse/:id') do
-    id = params[:id].to_i
-    db = SQLite3::Database.new("db/databas.db")
-    db.results_as_hash = true
-    @result = db.execute("SELECT * FROM products WHERE id = ?",id).first
-    slim(:"browse/show")
+  id = params[:id].to_i
+  db = SQLite3::Database.new("db/databas.db")
+  db.results_as_hash = true
+  @result = db.execute("SELECT * FROM products WHERE id = ?",id).first
+  slim(:"browse/show") 
 end
 
 
 post('/browse/new') do
-    title = params[:title]
-    desc = params[:description]
-    price = params[:price].to_i
-    file_path = params[:file][:filename]
+  title = params[:title]
+  desc = params[:description]
+  price = params[:price].to_i
+  file_path = params[:file][:filename]
 
-  
-    db = SQLite3::Database.new("db/databas.db")
-    db.execute("INSERT INTO products (name, description, price, file_path) VALUES (?, ?, ?, ?)", title, desc, price, file_path)
 
-    path = File.join("public/sheet_music/",file_path)
-    File.write(path, File.read(params[:file][:tempfile]))
-    redirect('/browse')
+  db = SQLite3::Database.new("db/databas.db")
+  db.execute("INSERT INTO products (name, description, price, file_path) VALUES (?, ?, ?, ?)", title, desc, price, file_path)
+
+  path = File.join("public/sheet_music/",file_path)
+  File.write(path, File.read(params[:file][:tempfile]))
+  redirect('/browse')
 end
+
+post('/browse/:id/delete') do
+  id = params[:id].to_i
+  db = SQLite3::Database.new("db/databas.db")
+  db.execute("DELETE FROM products WHERE id = ?", id)
+  redirect('/browse')
+end
+
+
+get('/browse/:id/edit') do
+  id = params[:id]
+  db = SQLite3::Database.new('db/databas.db')
+  db.results_as_hash = true
+  @result = db.execute("SELECT * FROM products WHERE id = ?", id).first
+  p @result
+  #if @result["user_id"] == session[:id]
+    # rätt personen är inloggad
+  slim(:"browse/edit")
+  #else
+    # fel person är inloggad
+    #"Logga in först"
+  #end
+end
+
+post('/browse/:id/update') do
+  name = params[:name]
+  desc = params[:description]
+  price = params[:price]
+  id = params[:id]
+  db = SQLite3::Database.new('db/databas.db')
+  db.execute("UPDATE products SET name=?,description=?,price=? WHERE id=?", name, desc, price, id)
+
+  redirect('/browse')
+end
+
+post('/browse/:id/add') do
+
+  db = SQLite3::Database.new('db/databas.db')
+  db.execute("INSERT INTO user_oroduct_rel (user_id, product_id) VALUES (?, ?)", )
+  redirect('/browse')
+end
+
   
 
 get('/register') do

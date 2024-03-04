@@ -3,3 +3,13 @@ def connect_to_db()
     db.results_as_hash = true
     return db
 end
+
+def fetch_products()
+    db = connect_to_db()
+    return db.execute("SELECT * FROM products")
+end
+
+def fetch_product(id)
+    db = connect_to_db()
+    return db.execute("SELECT * FROM products WHERE id = ?", id).first
+end

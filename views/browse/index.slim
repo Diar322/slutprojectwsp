@@ -2,5 +2,15 @@ h1 alla produkter
 
 ol
   - @result.each do |product|
-    li 
+    li
       a href="browse/#{product['id']}" #{product["name"]}
+      a.important_link href="browse/#{product['id']}/edit" redigera
+
+      - if session[:id] != nil
+        form method="POST" action="browse/#{product['id']}/add"
+          <input type="checkbox" id="purchase" name="purchase" />
+          <label for="purchase">Purchase</label>
+
+
+      form method="POST" action="browse/#{product['id']}/delete"
+        input type="submit" value="delete"
