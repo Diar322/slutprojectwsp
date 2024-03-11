@@ -5,3 +5,6 @@ form action="/login_result" method="post"
 
 p Har du inte ett konto?
 a.important_link href="/register" tryck här
+
+- if session[:id] != nil
+    a.important_link href="/logout" logga ut

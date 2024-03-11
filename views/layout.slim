@@ -8,6 +8,7 @@ html lang="en"
   body 
     nav
       a href="/browse" BROWSE
-      a href="/browse/new" CREATE
+      - if session[:id] != nil
+        a href="/browse/new" CREATE
       a href="/login" LOGIN
     ==yield

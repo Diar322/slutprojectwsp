@@ -14,19 +14,20 @@ end
 
 get('/browse') do
   @result = fetch_products()
-  slim(:"browse/index")
+  slim(:"products/index")
 end
 
 get('/browse/new') do
-    slim(:"browse/new")
+  if session[:id] == nil
+    redirect('/login')
+  end
+  slim(:"products/new")
 end
 
 get('/browse/:id') do
   id = params[:id].to_i
-  db = SQLite3::Database.new("db/databas.db")
-  db.results_as_hash = true
-  @result = db.execute("SELECT * FROM products WHERE id = ?",id).first
-  slim(:"browse/show") 
+  @result = fetch_product(id)
+  slim(:"products/show") 
 end
 
 
@@ -34,21 +35,21 @@ post('/browse/new') do
   title = params[:title]
   desc = params[:description]
   price = params[:price].to_i
-  file_path = params[:file][:filename]
+  if params[:file] != nil
+    file_path = params[:file][:filename]
+    path = File.join("public/sheet_music/",file_path)
+    File.write(path, File.read(params[:file][:tempfile]))  
+  end
 
+  insert_product(title, desc, price, file_path)
 
-  db = SQLite3::Database.new("db/databas.db")
-  db.execute("INSERT INTO products (name, description, price, file_path) VALUES (?, ?, ?, ?)", title, desc, price, file_path)
-
-  path = File.join("public/sheet_music/",file_path)
-  File.write(path, File.read(params[:file][:tempfile]))
+  
   redirect('/browse')
 end
 
 post('/browse/:id/delete') do
   id = params[:id].to_i
-  db = SQLite3::Database.new("db/databas.db")
-  db.execute("DELETE FROM products WHERE id = ?", id)
+  delete_product(id)
   redirect('/browse')
 end
 
@@ -61,7 +62,7 @@ get('/browse/:id/edit') do
   p @result
   #if @result["user_id"] == session[:id]
     # rätt personen är inloggad
-  slim(:"browse/edit")
+  slim(:"products/edit")
   #else
     # fel person är inloggad
     #"Logga in först"
@@ -82,7 +83,7 @@ end
 post('/browse/:id/add') do
 
   db = SQLite3::Database.new('db/databas.db')
-  db.execute("INSERT INTO user_oroduct_rel (user_id, product_id) VALUES (?, ?)", )
+  db.execute("INSERT INTO user_product_rel (user_id, product_id) VALUES (?, ?)", )
   redirect('/browse')
 end
 
@@ -133,17 +134,7 @@ get('/login') do
     slim(:login)
 end
 
-
-
-get('/download/:file_path') do
-    file_path = "sheet_music/#{params[:file_path]}"
-
-    p file_path
-    
-    if File.exist?(file_path)
-      send_file file_path, filename: "#{params[:file_path]}", type: 'application/pdf'
-    else
-      status 404
-      "File not found"
-    end
+get('/logout') do
+  session.clear()
+  redirect('/')
 end
