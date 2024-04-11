@@ -9,8 +9,8 @@ html lang="en"
     nav
       a href="/browse/" BROWSE
       - if session[:user_id] != nil
-          a href="/browse/new" CREATE
-          a href="/purchases" PURCHASES
+          a href="/protected/browse/new" CREATE
+          a href="/protected/purchases" PURCHASES
           a href="/logout" LOGOUT
       - else
           a href="/login" LOGIN

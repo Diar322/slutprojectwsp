@@ -6,6 +6,6 @@ ol
   - @result.each do |product|
     li
       a href="/browse/#{product['product_id']}" #{product["name"]}
-      form method="POST" action="browse/#{product['id']}/remove"
+      form method="POST" action="/protected/browse/#{product['id']}/remove"
         input type="submit" value="delete"
 

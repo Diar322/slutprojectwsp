@@ -8,10 +8,10 @@ ol
       a href="/browse/#{product['id']}" #{product["name"]}
 
       - if session[:user_id] == product["created_by"] || session[:role] == 1
-        a.important_link href="/browse/#{product['id']}/edit" redigera
-        form method="POST" action="/browse/#{product['id']}/delete"
+        a.important_link href="/private/browse/#{product['id']}/edit" redigera
+        form method="POST" action="/private/browse/#{product['id']}/delete"
           input type="submit" value="delete"
   
       - if session[:user_id] != nil
-        form method="POST" action="/browse/#{product['id']}/add"
+        form method="POST" action="/protected/browse/#{product['id']}/add"
           input type="submit" value="purchase"

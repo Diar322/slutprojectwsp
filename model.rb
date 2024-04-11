@@ -19,7 +19,6 @@ end
 
 def fetch_purchased_products(user_id)
     db = connect_to_db()
-    p user_id
     return db.execute("SELECT * FROM products INNER JOIN user_product_rel ON products.id = user_product_rel.product_id WHERE user_id = ?", user_id)
 end
 
@@ -53,8 +52,6 @@ end
 
 def register_user(username, password, password_confirm)
     db = connect_to_db()
-
-    p username, password, password_confirm
 
     if password != password_confirm
         flash[:notice] = "inte samma lösenord"
@@ -90,3 +87,14 @@ def remove_purchase(id)
     db.execute("DELETE FROM user_product_rel WHERE id = ?", id)
     flash[:notice] = "produkt borttagen från purchases"
 end
+
+# def is_purchased(user_id, product_id)
+#     db = connect_to_db()
+#     products = db.execute("SELECT * FROM user_product_rel WHERE user_id = ?", user_id)
+#     products.each do |product|
+#         if product['id'] == product_id
+#             return true
+#         end
+#     end
+#     return false
+# end

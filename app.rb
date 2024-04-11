@@ -15,7 +15,7 @@ get('/browse/') do
   slim(:"products/index")
 end
 
-get('/browse/new') do
+get('/protected/browse/new') do
   if session[:user_id] == nil
     redirect('/login')
   end
@@ -43,44 +43,31 @@ post('/browse') do
   redirect('/browse/')
 end
 
-post('/browse/:id/add') do
+post('/protected/browse/:id/add') do
   id = params[:id]
   insert_purchase(session[:user_id], id.to_i)
-  p session[:user_id]
-  p id
   redirect('/browse/')
 end
 
-post('/browse/:id/remove') do
+post('/protected/browse/:id/remove') do
   id = params[:id]
   remove_purchase(id)
   redirect('/browse/')
 end
 
-
-# before('/browse/:id/*') do
-#   id = params[:id].to_i
-#   product = fetch_product(id)
-#   if session["user_id"] != product["user_id"]
-#     redirect('/')
-#     "Du har inte åtkomst till denna produkt"
-#   end
-# end
-
-
-post('/browse/:id/delete') do
+post('/private/browse/:id/delete') do
   id = params[:id].to_i
   delete_product(id)
   redirect('/browse/')
 end
 
-get('/browse/:id/edit') do
+get('/private/browse/:id/edit') do
   id = params[:id].to_i
   @result = fetch_product(id)
   slim(:"products/edit")
 end
 
-post('/browse/:id/update') do
+post('/private/browse/:id/update') do
   name = params[:name]
   desc = params[:description]
   price = params[:price]
@@ -136,8 +123,23 @@ get('/logout') do
   redirect('/')
 end
 
-get('/purchases') do
+get('/protected/purchases') do
   @result = fetch_purchased_products(session[:user_id])
   p fetch_purchased_products(session[:user_id])
   slim(:purchases)
+end
+
+
+before('/protected/*') do
+  if session[:user_id] == nil
+    redirect('/')
+  end
+end
+
+before('/private/browse/:id/*') do
+  id = params[:id].to_i
+  product = fetch_product(id)
+  if session[:user_id] != product["created_by"] && session[:role] != 1
+    redirect('/')
+  end
 end
