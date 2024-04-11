@@ -1,4 +1,7 @@
-form action="/browse/new" method="post" enctype="multipart/form-data"
+- if flash[:notice]
+    p.notice = flash[:notice]
+
+form action="/browse" method="post" enctype="multipart/form-data"
     input type="text" name="title" placeholder="Titel på produkten"
     input type="text" name="description" placeholder="Beskrivning av produkten"
     input type="text" name="price" placeholder="Pris på produkten"

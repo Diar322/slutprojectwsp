@@ -1,13 +1,17 @@
 h1 alla produkter
+- if flash[:notice]
+    p.notice = flash[:notice]
 
 ol
   - @result.each do |product|
     li
-      a href="browse/#{product['id']}" #{product["name"]}
-      - if session[:id] != nil
-        a.important_link href="browse/#{product['id']}/edit" redigera
-        form method="POST" action="browse/#{product['id']}/add"
-          <input type="checkbox" id="purchase" name="purchase" />
-          <label for="purchase">Purchase</label>
-        form method="POST" action="browse/#{product['id']}/delete"
+      a href="/browse/#{product['id']}" #{product["name"]}
+
+      - if session[:user_id] == product["created_by"] || session[:role] == 1
+        a.important_link href="/browse/#{product['id']}/edit" redigera
+        form method="POST" action="/browse/#{product['id']}/delete"
           input type="submit" value="delete"
+  
+      - if session[:user_id] != nil
+        form method="POST" action="/browse/#{product['id']}/add"
+          input type="submit" value="purchase"

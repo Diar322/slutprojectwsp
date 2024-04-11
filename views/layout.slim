@@ -7,8 +7,11 @@ html lang="en"
     title Music
   body 
     nav
-      a href="/browse" BROWSE
-      - if session[:id] != nil
-        a href="/browse/new" CREATE
-      a href="/login" LOGIN
+      a href="/browse/" BROWSE
+      - if session[:user_id] != nil
+          a href="/browse/new" CREATE
+          a href="/purchases" PURCHASES
+          a href="/logout" LOGOUT
+      - else
+          a href="/login" LOGIN
     ==yield

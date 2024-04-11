@@ -1,0 +1,8 @@
+[Desktop Entry]
+Name=Musescore
+Exec=/home/diar/Downloads/MuseScore-4.2.1.240230938-x86_64.AppImage
+Comment=
+Terminal=false
+PrefersNonDefaultGPU=false
+Icon=musescore
+Type=Application
