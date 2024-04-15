@@ -78,7 +78,7 @@ post('/private/browse/:id/update') do
 end
 
 get('/register') do
-    slim(:register)
+    slim(:"users/register")
 end
 
 post('/registration_result') do
@@ -115,7 +115,7 @@ end
 
 get('/login') do
     #login som gör cooldown för A nivå
-    slim(:login)
+    slim(:"users/login")
 end
 
 get('/logout') do
@@ -142,4 +142,37 @@ before('/private/browse/:id/*') do
   if session[:user_id] != product["created_by"] && session[:role] != 1
     redirect('/')
   end
+end
+
+before('/admin/*') do
+  if session[:role] != 1
+    redirect('/')
+  end
+end
+
+get('/admin/users/') do
+  @result = fetch_users()
+  slim(:"users/index")
+end
+
+get('/admin/users/:id/edit') do
+  id = params[:id].to_i
+  @result = fetch_user_id(id)
+  slim(:"users/edit")
+end
+
+post('/admin/users/:id/update') do
+  name = params[:name]
+  pwd = params[:pwd]
+  role = params[:role]
+  id = params[:id]
+
+  edit_user(name, pwd, role, id)
+  redirect('/admin/users')
+end
+
+post('/admin/users/:id/delete') do
+  id = params[:id].to_i
+  delete_user(id)
+  redirect('/admin/users')
 end

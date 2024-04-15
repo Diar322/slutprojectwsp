@@ -1,0 +1,16 @@
+h1 alla users
+- if flash[:notice]
+    p.notice = flash[:notice]
+
+ol
+  - @result.each do |user|
+    li
+        p  #{user["username"]}
+
+        a.important_link href="/admin/users/#{user['id']}/edit" redigera
+
+        form method="POST" action="/admin/users/#{user['id']}/delete"
+          input type="submit" value="delete"
+        
+
+        

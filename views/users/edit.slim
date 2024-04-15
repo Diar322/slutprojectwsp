@@ -1,0 +1,7 @@
+form action="/admin/users/#{@result['id']}/update" method="post" 
+  input type="text" name="username" value="#{@result['username']}"
+  input type="text" name="pwd" placeholder="nytt lösenord"
+  input type="text" name="role" value="#{@result['role']}"
+
+  input type="hidden" name="id" value="#{@result['id']}"
+  input type="submit" value="Edit"

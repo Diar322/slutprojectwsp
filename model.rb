@@ -76,6 +76,16 @@ def fetch_user(username)
     return db.execute("SELECT * FROM users WHERE username=?", username).first
 end
 
+def fetch_user_id(id)
+    db = connect_to_db()
+    return db.execute("SELECT * FROM users WHERE id = ?", id).first
+end
+
+def fetch_users()
+    db = connect_to_db()
+    return db.execute("SELECT * FROM users")
+end
+
 def insert_purchase(user_id, product_id)
     db = connect_to_db()
     db.execute("INSERT INTO user_product_rel (user_id, product_id) VALUES (?, ?)", user_id,  product_id)
@@ -87,6 +97,17 @@ def remove_purchase(id)
     db.execute("DELETE FROM user_product_rel WHERE id = ?", id)
     flash[:notice] = "produkt borttagen från purchases"
 end
+
+def delete_user(id)
+    db = connect_to_db()
+    db.execute("DELETE FROM user_product_rel WHERE id = ?", id)
+    flash[:notice] = "produkt borttagen från purchases"
+end
+
+def edit_user(username, pwd, role, id)
+
+end
+
 
 # def is_purchased(user_id, product_id)
 #     db = connect_to_db()

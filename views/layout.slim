@@ -14,4 +14,8 @@ html lang="en"
           a href="/logout" LOGOUT
       - else
           a href="/login" LOGIN
+
+      - if session[:role] == 1
+          a href="/admin/users/" USERS
+
     ==yield
