@@ -1,6 +1,8 @@
 require 'bcrypt'
 require 'sinatra/flash'
 
+$attempts = {}
+
 def connect_to_db()
     db = SQLite3::Database.new("db/databas.db")
     db.results_as_hash = true
@@ -41,6 +43,7 @@ end
 def delete_product(id)
     db = connect_to_db()
     db.execute("DELETE FROM products WHERE id = ?", id)
+    db.execute("DELETE FROM user_product_rel WHERE product_id = ?", id)
     flash[:notice] = "produkt raderad"
 end
 
@@ -69,6 +72,36 @@ def register_user(username, password, password_confirm)
         redirect('/')
     end
     redirect('/register')
+end
+
+def login(username, password)
+    ip = request.ip
+
+    if $attempts[ip] == nil
+        #fine
+    elsif ($attempts[ip] - Time.now).to_i > 5
+        flash[:notice] = "Loggar in för snabbt!"
+        redirect('login')
+    end
+
+    if password == nil || username == nil
+        flash[:notice] = "Inga tomma värden!"
+        redirect('/login')
+    end
+    result = fetch_user(username)
+
+    if result == nil
+        flash[:notice] = "Loggade in!"
+    end
+    pwdigest = result["pwdigest"]
+    if BCrypt::Password.new(pwdigest) == password
+        flash[:notice] = "Loggade in!"
+        return true
+    else
+        $attempts[ip] = Time.now
+        flash[:notice] = "Fel lösenord!"
+        return false
+    end
 end
 
 def fetch_user(username)
@@ -100,11 +133,16 @@ end
 
 def delete_user(id)
     db = connect_to_db()
-    db.execute("DELETE FROM user_product_rel WHERE id = ?", id)
-    flash[:notice] = "produkt borttagen från purchases"
+    db.execute("DELETE FROM users WHERE id = ?", id)
+    db.execute("DELETE FROM user_product_rel WHERE user_id = ?", id)
+    flash[:notice] = "användare raderad"
 end
 
 def edit_user(username, pwd, role, id)
+    db = connect_to_db()
+    pwddigest = BCrypt::Password.create(password)
+    db.execute("UPDATE users SET username=?,pwdigest=?,role=? WHERE id=?", name, pwddigest, role, id)
+    flash[:notice] = "användare redigerad"
 
 end
 

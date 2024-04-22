@@ -16,6 +16,7 @@ html lang="en"
           a href="/login" LOGIN
 
       - if session[:role] == 1
-          a href="/admin/users/" USERS
-
+          a href="/admin/users/" USERS      
+    - if flash[:notice]
+      p.notice = flash[:notice]
     ==yield

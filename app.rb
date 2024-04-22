@@ -97,20 +97,15 @@ post('/login_result') do
     username = params[:user]
     password = params[:pwd]
 
-    if password == nil || username == nil
-      redirect('/login')
-    end
-
-    result = fetch_user(username)
-    pwdigest = result["pwdigest"]
-    if BCrypt::Password.new(pwdigest) == password
+    if login(username, password)
+      result = fetch_user(username)
       session[:user_id] = result["id"]
       session[:role] = result["role"]
       redirect('/')
     else
-      "FEL LÖSEN"
+      redirect('/login')
     end
-    redirect('/')
+
 end
 
 get('/login') do
@@ -168,11 +163,13 @@ post('/admin/users/:id/update') do
   id = params[:id]
 
   edit_user(name, pwd, role, id)
-  redirect('/admin/users')
+  redirect('/admin/users/')
 end
 
 post('/admin/users/:id/delete') do
   id = params[:id].to_i
   delete_user(id)
-  redirect('/admin/users')
+  redirect('/admin/users/')
 end
+
+#Du måste fixa inlogg så att det tar tid att logga in, också kolla om redirect skall finnas i model.rb
